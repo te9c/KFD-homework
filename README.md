@@ -1,1 +1,1 @@
-# Homeworks for Kotlin fullstack developer.
+# Homeworks for Kotlin fullstack developer
