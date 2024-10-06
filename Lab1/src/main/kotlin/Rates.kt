@@ -5,8 +5,6 @@ import kotlin.math.max
 import kotlin.random.Random
 
 class Rates(
-    // Uppercase or lowercase?
-    // Let it be uppercase for now...
     val pairs : MutableMap<Pair<String, String>, Int> = mutableMapOf(
         Pair("USD", "RUB") to 9561,
         Pair("EUR", "RUB") to 10500,

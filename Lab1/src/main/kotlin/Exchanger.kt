@@ -17,7 +17,6 @@ class Exchanger {
     )
     val rates = Rates()
 
-    // TODO: refactor: make one internal function for buying/selling
     fun buy(user : User, pair : Pair<String, String>, amount : Int) : ExchangeStatus {
         val rate = rates.pairs[pair] ?: return ExchangeStatus.INVALID_PAIR
 

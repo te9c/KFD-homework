@@ -48,8 +48,7 @@ rates - show exchange rates and exchanger balance
 buy <Pair> <Amount> - buy specified pair
 sell <Pair> <Amount> - sell specified pair
 help - show this message
-exit - exit this shell");
-""")
+exit - exit this shell""")
 }
 
 fun printBalance(args : Collection<String>) {
