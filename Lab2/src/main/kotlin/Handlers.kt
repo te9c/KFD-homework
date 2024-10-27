@@ -8,6 +8,7 @@ interface EventHandler<in T : Event> {
 object ErrorEventHandler : EventHandler<ErrorEvent> {
     override fun handle(event: ErrorEvent) : String {
         return """
+            Error happened!
             Error message: ${event.message}
             Error code: ${event.errorCode}
             """.trimIndent()
