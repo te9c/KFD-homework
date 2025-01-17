@@ -1,8 +1,7 @@
 package com.example.lab4
 
-import com.example.lab4.db.UserRepository
+import com.example.lab4.db.repositories.UserRepository
 import org.springframework.security.core.GrantedAuthority
-import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetailsService

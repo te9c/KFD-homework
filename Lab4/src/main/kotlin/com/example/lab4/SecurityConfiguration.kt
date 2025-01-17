@@ -25,8 +25,9 @@ class SecurityConfiguration(private val userDetailsService: CustomUserDetailsSer
             csrf { disable() }
             authorizeHttpRequests {
                 authorize(HttpMethod.POST, "/api/users/register", permitAll)
+                authorize("/api/users/balance/{name}", WebExpressionAuthorizationManager("#name == authentication.name"))
                 authorize("/api/users/{name}", WebExpressionAuthorizationManager("#name == authentication.name"))
-                authorize(anyRequest, authenticated)
+                authorize(anyRequest, permitAll)
             }
             httpBasic { }
         }
