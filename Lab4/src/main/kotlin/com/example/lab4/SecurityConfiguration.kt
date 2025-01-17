@@ -5,9 +5,11 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod
 import org.springframework.security.authentication.AuthenticationProvider
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.invoke
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
+import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.SecurityFilterChain
@@ -15,6 +17,7 @@ import org.springframework.security.web.access.expression.WebExpressionAuthoriza
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 class SecurityConfiguration(private val userDetailsService: CustomUserDetailsService) {
     @Bean
     fun passwordEncoder(): PasswordEncoder = BCryptPasswordEncoder()
@@ -23,11 +26,8 @@ class SecurityConfiguration(private val userDetailsService: CustomUserDetailsSer
     fun filterSecurityChain(http: HttpSecurity): SecurityFilterChain {
         http {
             csrf { disable() }
-            authorizeHttpRequests {
-                authorize(HttpMethod.POST, "/api/users/register", permitAll)
-                authorize("/api/users/balance/{name}", WebExpressionAuthorizationManager("#name == authentication.name"))
-                authorize("/api/users/{name}", WebExpressionAuthorizationManager("#name == authentication.name"))
-                authorize(anyRequest, permitAll)
+            anonymous {
+                authorities = listOf(SimpleGrantedAuthority("ROLE_ANON"))
             }
             httpBasic { }
         }

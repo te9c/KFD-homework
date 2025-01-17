@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators
 import jakarta.persistence.*
 
 @Entity
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator::class, property = "id")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator::class, property = "username")
 class ExchangerUser (
     @Column(unique = true)
     val username: String,
@@ -23,9 +23,11 @@ class ExchangerUser (
     var balances: MutableList<Balance> = mutableListOf(),
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "sender", cascade = [CascadeType.ALL])
+    @JsonIgnore
     var outcomingTransactions: MutableList<Transaction> = mutableListOf(),
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "receiver", cascade = [CascadeType.ALL])
+    @JsonIgnore
     var incomingTransactions: MutableList<Transaction> = mutableListOf()
 ) {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
