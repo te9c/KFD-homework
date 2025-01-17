@@ -25,13 +25,13 @@ class TransactionsController(
 
     @GetMapping("/user/{username}")
     @PreAuthorize("#u == authentication.name")
-    fun getTransactions(@PathVariable @P("u") username: String): List<Transaction> {
-        val user = userRepository.findByUsername(username) ?: return emptyList()
-        return transactionRepository.findBySender(user) + transactionRepository.findByReceiver(user)
+    fun getTransactions(@PathVariable @P("u") username: String): ResponseEntity<List<Transaction>> {
+        val user = userRepository.findByUsername(username) ?: return ResponseEntity.notFound().build()
+        return ResponseEntity.ok(user.transactions)
     }
 
     @GetMapping("/{id}")
-    @PostAuthorize("returnObject.body.sender == authentication.name || returnObject.body.receiver == authentication.name")
+    @PostAuthorize("returnObject == null || returnObject.body.user == authentication.name")
     fun getTransactionById(@PathVariable @P("id") id: Long): ResponseEntity<Transaction?> {
         val transaction = transactionRepository.findById(id).getOrNull() ?: return ResponseEntity.notFound().build()
         return ResponseEntity.ok(transaction)

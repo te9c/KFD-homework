@@ -3,7 +3,7 @@ package com.example.lab4.db
 import jakarta.persistence.*
 
 @Entity
-class ExchangerBalance(
+data class ExchangerBalance(
     @Column(unique = true)
     val currencyCode: String,
     var amount: Int

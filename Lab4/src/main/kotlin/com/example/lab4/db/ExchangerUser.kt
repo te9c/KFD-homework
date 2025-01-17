@@ -8,7 +8,7 @@ import jakarta.persistence.*
 
 @Entity
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator::class, property = "username")
-class ExchangerUser (
+data class ExchangerUser (
     @Column(unique = true)
     val username: String,
 
@@ -22,17 +22,10 @@ class ExchangerUser (
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "user", cascade = [CascadeType.ALL])
     var balances: MutableList<Balance> = mutableListOf(),
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "sender", cascade = [CascadeType.ALL])
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "user", cascade = [CascadeType.ALL])
     @JsonIgnore
-    var outcomingTransactions: MutableList<Transaction> = mutableListOf(),
-
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "receiver", cascade = [CascadeType.ALL])
-    @JsonIgnore
-    var incomingTransactions: MutableList<Transaction> = mutableListOf()
+    var transactions: MutableList<Transaction> = mutableListOf(),
 ) {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id : Long? = null
-
-    @JsonIgnore
-    fun getTransactions() : List<Transaction> = outcomingTransactions + incomingTransactions
 }

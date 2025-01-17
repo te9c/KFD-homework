@@ -5,24 +5,24 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo
 import com.fasterxml.jackson.annotation.JsonIdentityReference
 import com.fasterxml.jackson.annotation.ObjectIdGenerators
 import jakarta.persistence.*
+import org.springframework.expression.spel.ast.OpPlus
 import java.time.LocalDateTime
 
 @Entity
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator::class, property = "id")
-class Transaction(
+data class Transaction(
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "sender_id")
+    @JoinColumn(name = "user")
     @JsonIdentityReference(alwaysAsId = true)
-    val sender: ExchangerUser,
+    val user: ExchangerUser,
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "receiver_id")
-    @JsonIdentityReference(alwaysAsId = true)
-    val receiver: ExchangerUser,
-
-    val amount: Int,
-
-    val currencyCode: String,
+    // let the plus value be user gainings
+    // and minus value user expenses
+    // This will help avoid flag for buying/selling
+    val currencyPair: String,
+    val rate: Int,
+    val baseCurrencyDelta: Int,
+    val quoteCurrencyDelta: Int,
 
     val timestamp: LocalDateTime
 ) {
