@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.core.parameters.P
 import org.springframework.web.bind.annotation.*
+import kotlin.jvm.optionals.getOrNull
 
 @RestController
 @RequestMapping("/api/balance")
@@ -26,9 +27,24 @@ class BalanceController(
         return ResponseEntity.ok(user.balances)
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/id/{id}")
+    fun getBalance(@PathVariable id: Long): ResponseEntity<Balance?> {
+        val balance = balanceRepository.findById(id).getOrNull() ?: return ResponseEntity.notFound().build()
+        return ResponseEntity.ok(balance)
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("/{id}")
+    fun deleteBalance(@PathVariable id: Long): ResponseEntity<Void> {
+        val balance = balanceRepository.findById(id).getOrNull() ?: return ResponseEntity.notFound().build()
+        balanceRepository.delete(balance)
+        return ResponseEntity.ok().build()
+    }
+
     @PostMapping("/{username}")
     @PreAuthorize("hasRole('ADMIN')")
-    fun updateBalance(@PathVariable @P("username") username: String, @RequestBody @Valid balance: Balance): ResponseEntity<List<Balance>> {
+    fun updateBalance(@PathVariable @P("username") username: String, @RequestBody balance: Balance): ResponseEntity<List<Balance>> {
         val user = userRepository.findByUsername(username) ?: return ResponseEntity.notFound().build()
         val userBalance = user.balances.firstOrNull {it.currencyCode == balance.currencyCode }
         if (userBalance == null) {
