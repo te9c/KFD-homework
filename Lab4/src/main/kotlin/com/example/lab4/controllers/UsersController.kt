@@ -21,7 +21,7 @@ class UsersController(val userRepository: UserRepository,
     @GetMapping()
     fun getUsers(): List<ExchangerUser> = userRepository.findAll()
 
-    @PreAuthorize("authentication.name == #u")
+    @PreAuthorize("authentication.name == #u || hasRole('ADMIN')")
     @GetMapping("/{username}")
     fun getUser(@PathVariable @P("u") username: String): ResponseEntity<ExchangerUser?> {
         val user = userRepository.findByUsername(username) ?: return ResponseEntity.notFound().build()
@@ -35,37 +35,4 @@ class UsersController(val userRepository: UserRepository,
         userRepository.delete(user)
         return ResponseEntity.ok().build()
     }
-
-    @PostMapping("/register")
-    @PreAuthorize("hasRole('ROLE_ANON') || hasRole('ROLE_USER')")
-    fun registerUser(@Valid @RequestBody registerRequest: RegisterRequest) : ResponseEntity<Any> {
-        val user = userRepository.findByUsername(registerRequest.username)
-        if (user != null) {
-            return ResponseEntity.badRequest().build()
-        }
-        val authorities: MutableList<String> = mutableListOf("ROLE_USER")
-        if (SecurityContextHolder.getContext().getAuthentication()?.authorities?.firstOrNull { it.authority == "ROLE_ADMIN" } != null &&
-            registerRequest.authorities != null) {
-            authorities.addAll(registerRequest.authorities)
-        }
-        val savedUser = ExchangerUser(registerRequest.username, encoder.encode(registerRequest.password), authorities)
-        savedUser.balances = getDefaultBalances(savedUser)
-        val ret = userRepository.save(savedUser)
-        return ResponseEntity(ret, HttpStatus.CREATED)
-    }
-
-    private fun getDefaultBalances(user: ExchangerUser): MutableList<Balance> {
-        return mutableListOf(
-            Balance("RUB", 1000000, user = user),
-            Balance("USD", 1000000, user = user)
-        )
-    }
 }
-
-data class RegisterRequest(
-    @field:NotBlank
-    val username: String,
-    @field:NotBlank
-    val password: String,
-    val authorities: List<String>?
-)

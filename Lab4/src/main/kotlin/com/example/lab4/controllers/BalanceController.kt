@@ -19,14 +19,14 @@ class BalanceController(
     @GetMapping
     fun getBalances() = balanceRepository.findAll()
 
-    @PreAuthorize("#u == authentication.name")
+    @PreAuthorize("#u == authentication.name || hasRole('ADMIN')")
     @GetMapping("/{username}")
     fun getBalances(@PathVariable @P("u") username: String) : ResponseEntity<List<Balance>> {
         val user = userRepository.findByUsername(username) ?: return ResponseEntity.notFound().build()
         return ResponseEntity.ok(user.balances)
     }
 
-    @PutMapping("/{username}")
+    @PostMapping("/{username}")
     @PreAuthorize("hasRole('ADMIN')")
     fun updateBalance(@PathVariable @P("username") username: String, @RequestBody @Valid balance: Balance): ResponseEntity<List<Balance>> {
         val user = userRepository.findByUsername(username) ?: return ResponseEntity.notFound().build()

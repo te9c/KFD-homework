@@ -41,7 +41,6 @@ class AuthController(
             authorities.addAll(registerRequest.authorities)
         }
         val savedUser = ExchangerUser(registerRequest.username, encoder.encode(registerRequest.password), authorities)
-        savedUser.balances = getDefaultBalances(savedUser)
         val ret = userRepository.save(savedUser)
         return ResponseEntity(ret, HttpStatus.CREATED)
     }
@@ -60,13 +59,6 @@ class AuthController(
         val token = jwtUtil.generateToken(userDetails.username)
         return ResponseEntity.ok(token)
     }
-
-    private fun getDefaultBalances(user: ExchangerUser): MutableList<Balance> {
-        return mutableListOf(
-            Balance("RUB", 1000000, user = user),
-            Balance("USD", 1000000, user = user)
-        )
-    }
 }
 
 class AuthenticationRequest(
@@ -74,4 +66,12 @@ class AuthenticationRequest(
     val username: String,
     @field:NotBlank
     val password: String
+)
+
+data class RegisterRequest(
+    @field:NotBlank
+    val username: String,
+    @field:NotBlank
+    val password: String,
+    val authorities: List<String>?
 )
