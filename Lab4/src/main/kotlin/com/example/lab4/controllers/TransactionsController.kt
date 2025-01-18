@@ -1,11 +1,10 @@
 package com.example.lab4.controllers
 
-import com.example.lab4.RateUpdater
+import com.example.lab4.services.RateUpdater
 import com.example.lab4.db.*
 import com.example.lab4.db.repositories.*
 import com.fasterxml.jackson.annotation.JsonValue
 import jakarta.validation.Valid
-import jakarta.validation.constraints.Min
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
 import jakarta.validation.constraints.Pattern

@@ -1,4 +1,4 @@
-package com.example.lab4
+package com.example.lab4.services
 
 import com.example.lab4.db.ExchangerUser
 import com.example.lab4.db.repositories.UserRepository

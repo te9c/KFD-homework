@@ -1,11 +1,14 @@
-package com.example.lab4
+package com.example.lab4.security
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.http.HttpMethod
+import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.AuthenticationProvider
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
+import org.springframework.security.config.annotation.web.WebSecurityConfigurer
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.invoke
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
@@ -13,12 +16,16 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.SecurityFilterChain
-import org.springframework.security.web.access.expression.WebExpressionAuthorizationManager
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
-class SecurityConfiguration(private val userDetailsService: CustomUserDetailsService) {
+class SecurityConfiguration(
+    private val userDetailsService: CustomUserDetailsService,
+    private val jwtUtil: JwtUtil,
+    private val authenticationConfiguration: AuthenticationConfiguration
+) {
     @Bean
     fun passwordEncoder(): PasswordEncoder = BCryptPasswordEncoder()
 
@@ -29,7 +36,9 @@ class SecurityConfiguration(private val userDetailsService: CustomUserDetailsSer
             anonymous {
                 authorities = listOf(SimpleGrantedAuthority("ROLE_ANON"))
             }
-            httpBasic { }
+            addFilterAfter<UsernamePasswordAuthenticationFilter>(
+                JwtAuthenticationFilter(userDetailsService, jwtUtil)
+            )
         }
         return http.build()
     }
@@ -41,4 +50,7 @@ class SecurityConfiguration(private val userDetailsService: CustomUserDetailsSer
         provider.setPasswordEncoder(passwordEncoder())
         return provider
     }
+
+    @Bean
+    fun getAuthenticationManager(): AuthenticationManager = authenticationConfiguration.authenticationManager
 }

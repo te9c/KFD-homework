@@ -1,4 +1,4 @@
-package com.example.lab4
+package com.example.lab4.security
 
 import com.example.lab4.db.repositories.UserRepository
 import org.springframework.security.core.GrantedAuthority

@@ -1,22 +1,15 @@
 package com.example.lab4.controllers
 
-import com.example.lab4.RateUpdater
+import com.example.lab4.services.RateUpdater
 import com.example.lab4.db.CurrencyPair
 import com.example.lab4.db.repositories.RateRepository
 import com.example.lab4.db.repositories.findByCurrencyPair
 import jakarta.validation.Valid
-import jakarta.validation.constraints.Max
-import jakarta.validation.constraints.Min
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
 import jakarta.validation.constraints.Positive
-import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
-import org.springframework.stereotype.Controller
-import org.springframework.validation.BindingResult
-import org.springframework.validation.annotation.Validated
-import org.springframework.web.ErrorResponse
 import org.springframework.web.bind.annotation.*
 import java.net.URI
 
