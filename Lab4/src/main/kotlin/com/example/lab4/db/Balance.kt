@@ -5,9 +5,8 @@ import jakarta.persistence.*
 
 @Entity
 @Table(uniqueConstraints = [UniqueConstraint(columnNames = ["user_id", "currencyCode"])])
-data class Balance(
-    @Column
-    val currencyCode: String,
+class Balance(
+    currencyCode: String,
     @Column
     var amount: Int,
     @ManyToOne(fetch = FetchType.EAGER)
@@ -15,6 +14,7 @@ data class Balance(
     @JoinColumn(nullable = false, name = "user_id")
     val user: ExchangerUser? = null
 ) {
+    val currencyCode = currencyCode.uppercase()
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long? = null

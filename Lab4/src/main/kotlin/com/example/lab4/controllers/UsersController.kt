@@ -54,20 +54,18 @@ class UsersController(val userRepository: UserRepository,
         return ResponseEntity(ret, HttpStatus.CREATED)
     }
 
-    // TODO: Admin user creation
-
     private fun getDefaultBalances(user: ExchangerUser): MutableList<Balance> {
         return mutableListOf(
-            Balance("RUB", 1000, user = user),
-            Balance("USD", 1000, user = user)
+            Balance("RUB", 1000000, user = user),
+            Balance("USD", 1000000, user = user)
         )
     }
 }
 
 data class RegisterRequest(
-    @NotBlank
+    @field:NotBlank
     val username: String,
-    @NotBlank
+    @field:NotBlank
     val password: String,
     val authorities: List<String>?
 )

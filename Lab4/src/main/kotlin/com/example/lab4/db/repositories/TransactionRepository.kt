@@ -5,5 +5,5 @@ import com.example.lab4.db.Transaction
 import org.springframework.data.jpa.repository.JpaRepository
 
 interface TransactionRepository : JpaRepository<Transaction, Long> {
-    fun findByUser(user: ExchangerUser) : List<Transaction>
+    fun findByUsername(user: ExchangerUser) : List<Transaction>
 }

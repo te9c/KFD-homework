@@ -2,7 +2,6 @@ package com.example.lab4.db
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo
 import com.fasterxml.jackson.annotation.JsonIgnore
-import com.fasterxml.jackson.annotation.JsonManagedReference
 import com.fasterxml.jackson.annotation.ObjectIdGenerators
 import jakarta.persistence.*
 
@@ -22,7 +21,7 @@ data class ExchangerUser (
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "user", cascade = [CascadeType.ALL])
     var balances: MutableList<Balance> = mutableListOf(),
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "user", cascade = [CascadeType.ALL])
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "username", cascade = [CascadeType.ALL])
     @JsonIgnore
     var transactions: MutableList<Transaction> = mutableListOf(),
 ) {

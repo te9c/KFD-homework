@@ -2,6 +2,11 @@ package com.example.lab4.controllers
 
 import com.example.lab4.db.ExchangerBalance
 import com.example.lab4.db.repositories.ExchangerRepository
+import jakarta.validation.Valid
+import jakarta.validation.constraints.Min
+import jakarta.validation.constraints.NotBlank
+import jakarta.validation.constraints.NotNull
+import jakarta.validation.constraints.PositiveOrZero
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
@@ -17,13 +22,13 @@ class ExchangerController(
     @GetMapping("/{id}")
     fun ExchangerBalance(@PathVariable id: Long) = exchangerRepository.findById(id)
 
-    @DeleteMapping("/{id")
+    @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     fun deleteExchangerBalance(@PathVariable id: Long) = exchangerRepository.deleteById(id)
 
     @PostMapping
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    fun addBalance(@RequestBody request: ExchangerBalanceRequest): ResponseEntity<Any> {
+    fun addBalance(@Valid @RequestBody request: ExchangerBalanceRequest): ResponseEntity<Any> {
         val balance = exchangerRepository.findByCurrencyCode(request.currencyCode)
         if (balance != null) {
             balance.amount = request.amount
@@ -37,6 +42,9 @@ class ExchangerController(
 }
 
 data class ExchangerBalanceRequest(
+    @field:NotBlank
     val currencyCode: String,
+    @field:NotNull
+    @field:PositiveOrZero
     val amount: Int
 )
