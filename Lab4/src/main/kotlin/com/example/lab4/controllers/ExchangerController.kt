@@ -23,21 +23,22 @@ class ExchangerController(
     fun ExchangerBalance(@PathVariable id: Long) = exchangerRepository.findById(id)
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     fun deleteExchangerBalance(@PathVariable id: Long) = exchangerRepository.deleteById(id)
 
     @PostMapping
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    fun addBalance(@Valid @RequestBody request: ExchangerBalanceRequest): ResponseEntity<Any> {
-        val balance = exchangerRepository.findByCurrencyCode(request.currencyCode)
-        if (balance != null) {
-            balance.amount = request.amount
-            val ret = exchangerRepository.save(balance)
-            return ResponseEntity.ok(ret)
-        } else {
-            val ret = exchangerRepository.save(ExchangerBalance(request.currencyCode, request.amount))
-            return ResponseEntity.ok(ret)
+    @PreAuthorize("hasRole('ADMIN')")
+    fun addBalances(@RequestBody requests: List<@Valid ExchangerBalanceRequest>): ResponseEntity<Any> {
+        for (request in requests) {
+            val balance = exchangerRepository.findByCurrencyCode(request.currencyCode)
+            if (balance != null) {
+                balance.amount = request.amount
+                val ret = exchangerRepository.save(balance)
+            } else {
+                val ret = exchangerRepository.save(ExchangerBalance(request.currencyCode, request.amount))
+            }
         }
+        return ResponseEntity.ok(getExchangerBalance())
     }
 }
 

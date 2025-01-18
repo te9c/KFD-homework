@@ -4,6 +4,9 @@ import com.example.lab4.db.Balance
 import com.example.lab4.db.repositories.BalanceRepository
 import com.example.lab4.db.repositories.UserRepository
 import jakarta.validation.Valid
+import jakarta.validation.constraints.NotBlank
+import jakarta.validation.constraints.Positive
+import jakarta.validation.constraints.PositiveOrZero
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.core.parameters.P
@@ -44,15 +47,25 @@ class BalanceController(
 
     @PostMapping("/{username}")
     @PreAuthorize("hasRole('ADMIN')")
-    fun updateBalance(@PathVariable @P("username") username: String, @RequestBody balance: Balance): ResponseEntity<List<Balance>> {
+    fun updateBalance(@PathVariable @P("username") username: String, @RequestBody balances: List<@Valid BalanceRequest>): ResponseEntity<List<Balance>> {
         val user = userRepository.findByUsername(username) ?: return ResponseEntity.notFound().build()
-        val userBalance = user.balances.firstOrNull {it.currencyCode == balance.currencyCode }
-        if (userBalance == null) {
-            user.balances.add(balance)
-        } else {
-            userBalance.amount += balance.amount
+
+        for (balance in balances) {
+            val userBalance = user.balances.firstOrNull { it.currencyCode == balance.currencyCode }
+            if (userBalance == null) {
+                user.balances.add(Balance(balance.currencyCode, balance.amount, user))
+            } else {
+                userBalance.amount += balance.amount
+            }
         }
         userRepository.save(user)
         return ResponseEntity.ok(user.balances)
     }
 }
+
+class BalanceRequest(
+    @field:NotBlank
+    val currencyCode: String,
+    @field:PositiveOrZero
+    val amount: Int,
+)
