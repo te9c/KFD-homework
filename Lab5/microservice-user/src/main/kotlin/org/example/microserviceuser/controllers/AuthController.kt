@@ -11,15 +11,15 @@ import org.springframework.http.ResponseEntity
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.security.core.userdetails.User
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-
-// I need to create signup, signin and check method.
 
 @RestController
 @RequestMapping("/api/auth")
@@ -38,8 +38,22 @@ class AuthController(
             return false
         }
     }
+    @PostMapping("/getuser")
+    fun getUser(@RequestBody token: String): UserDto? {
+        val username: String
+        try {
+            username = jwtUtil.extractUsername(token)
+            if (jwtUtil.isTokenExpired(token))
+                return null
+        } catch (ex: Exception) {
+            return null
+        }
+        val user = userRepository.findByUsername(username) ?: return null
+        return UserDto(user.username, user.password, user.authorities)
+    }
+
     @PostMapping("/signup")
-    fun registerUser(@Valid @RequestBody registerRequest: RegisterRequest): ResponseEntity<Any> {
+    fun registerUser(@Valid @RequestBody registerRequest: UserDto): ResponseEntity<Any> {
         val user = userRepository.findByUsername(registerRequest.username)
         if (user != null) {
             return ResponseEntity.badRequest().build()
@@ -79,7 +93,7 @@ class AuthenticationRequest(
     val password: String
 )
 
-data class RegisterRequest(
+data class UserDto(
     @field:NotBlank
     val username: String,
     @field:NotBlank
