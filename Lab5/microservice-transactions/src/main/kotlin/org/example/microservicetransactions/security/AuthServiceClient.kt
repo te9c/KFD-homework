@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 
-@FeignClient(name = "auth-service", url = "http://localhost:8081")
+@FeignClient(name = "microservice-user")
 interface AuthServiceClient {
     @PostMapping("/api/auth/getuser", produces= arrayOf("application/json"))
     fun getUserDetails(@RequestBody token: String): UserDto?

@@ -17,4 +17,4 @@ plugins {
 }
 
 rootProject.name = "Lab5"
-include("microservice-transactions", "microservice-user")
+include("microservice-transactions", "microservice-user", "microservice-eureka-server", "microservice-gateway")

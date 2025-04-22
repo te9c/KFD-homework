@@ -1,7 +1,7 @@
 package org.example.microserviceuser.controllers
 
 import jakarta.validation.Valid
-import jakarta.validation.constraints.NotBlank
+import org.example.microserviceuser.dto.UserDto
 import org.example.microserviceuser.db.ExchangerUser
 import org.example.microserviceuser.db.repositories.UserRepository
 import org.example.microserviceuser.security.CustomUserDetailsService
@@ -11,9 +11,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
-import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.context.SecurityContextHolder
-import org.springframework.security.core.userdetails.User
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
@@ -71,7 +69,7 @@ class AuthController(
     }
 
     @PostMapping("/signin")
-    fun loginUser(@RequestBody @Valid request: AuthenticationRequest): ResponseEntity<String> {
+    fun loginUser(@RequestBody @Valid request: UserDto): ResponseEntity<String> {
         try {
             authenticationManager.authenticate(
                 UsernamePasswordAuthenticationToken(request.username, request.password)
@@ -85,18 +83,3 @@ class AuthController(
         return ResponseEntity.ok(token)
     }
 }
-
-class AuthenticationRequest(
-    @field:NotBlank
-    val username: String,
-    @field:NotBlank
-    val password: String
-)
-
-data class UserDto(
-    @field:NotBlank
-    val username: String,
-    @field:NotBlank
-    val password: String,
-    val authorities: List<String>?
-)
