@@ -6,15 +6,15 @@
  * This project uses @Incubating APIs which are subject to change.
  */
 
-pluginManagement {
-    // Include 'plugins build' to define convention plugins.
-    includeBuild("build-logic")
-}
+//pluginManagement {
+//    // Include 'plugins build' to define convention plugins.
+//    includeBuild("build-logic")
+//}
 
-plugins {
-    // Apply the foojay-resolver plugin to allow automatic download of JDKs
-    id("org.gradle.toolchains.foojay-resolver-convention") version "0.9.0"
-}
+//plugins {
+//    // Apply the foojay-resolver plugin to allow automatic download of JDKs
+//    id("org.gradle.toolchains.foojay-resolver-convention") version "0.9.0"
+//}
 
 rootProject.name = "Lab5"
 include("microservice-transactions", "microservice-user", "microservice-eureka-server", "microservice-gateway")

@@ -17,9 +17,6 @@ data class ExchangerUser (
 
     @ElementCollection(fetch = FetchType.EAGER)
     val authorities: List<String> = emptyList(),
-
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "user", cascade = [CascadeType.ALL])
-    var balances: MutableList<Balance> = mutableListOf()
 ) {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)

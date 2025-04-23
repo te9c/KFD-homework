@@ -1,13 +1,13 @@
-package org.example.microserviceuser.controllers
+package org.example.microservicetransactions.controllers
 
 import jakarta.validation.Valid
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.Positive
 import jakarta.validation.constraints.PositiveOrZero
-import org.example.microserviceuser.db.Balance
-import org.example.microserviceuser.db.repositories.BalanceRepository
-import org.example.microserviceuser.db.repositories.UserRepository
-import org.example.microserviceuser.dto.BalanceDto
+import org.example.microservicetransactions.clients.AuthServiceClient
+import org.example.microservicetransactions.db.Balance
+import org.example.microservicetransactions.db.repositories.BalanceRepository
+import org.example.microservicetransactions.dto.BalanceDto
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.core.parameters.P
@@ -17,8 +17,8 @@ import kotlin.jvm.optionals.getOrNull
 @RestController
 @RequestMapping("/api/balance")
 class BalanceController(
-    private val userRepository: UserRepository,
-    private val balanceRepository: BalanceRepository
+    private val balanceRepository: BalanceRepository,
+    private val authServiceClient: AuthServiceClient
 ) {
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
@@ -26,9 +26,8 @@ class BalanceController(
 
     @PreAuthorize("#u == authentication.name || hasRole('ADMIN')")
     @GetMapping("/{username}")
-    fun getBalances(@PathVariable @P("u") username: String) : ResponseEntity<List<Balance>> {
-        val user = userRepository.findByUsername(username) ?: return ResponseEntity.notFound().build()
-        return ResponseEntity.ok(user.balances)
+    fun getBalances(@PathVariable @P("u") username: String) : ResponseEntity<Collection<Balance>> {
+        return ResponseEntity.ok(balanceRepository.findBalancesByUsername(username))
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -49,17 +48,18 @@ class BalanceController(
     @PostMapping("/{username}")
     @PreAuthorize("hasRole('ADMIN')")
     fun updateBalance(@PathVariable @P("username") username: String, @RequestBody balances: List<@Valid BalanceDto>): ResponseEntity<List<Balance>> {
-        val user = userRepository.findByUsername(username) ?: return ResponseEntity.notFound().build()
+        //val user = authServiceClient.getUser(username) ?: return ResponseEntity.notFound().build()
+        val userBalances = balanceRepository.findBalancesByUsername(username).toMutableList()
 
         for (balance in balances) {
-            val userBalance = user.balances.firstOrNull { it.currencyCode == balance.currencyCode }
+            val userBalance = userBalances.firstOrNull { it.currencyCode == balance.currencyCode }
             if (userBalance == null) {
-                user.balances.add(Balance(balance.currencyCode, balance.amount, user))
+                userBalances.add(Balance(balance.currencyCode, balance.amount, username))
             } else {
                 userBalance.amount += balance.amount
             }
         }
-        userRepository.save(user)
-        return ResponseEntity.ok(user.balances)
+        balanceRepository.saveAll(userBalances)
+        return ResponseEntity.ok(userBalances)
     }
 }

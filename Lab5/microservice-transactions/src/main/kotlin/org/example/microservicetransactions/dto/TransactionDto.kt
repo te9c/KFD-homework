@@ -8,7 +8,7 @@ import jakarta.validation.constraints.Positive
 
 class TransactionDto(
     @field:NotBlank
-    val user: String,
+    val username: String,
     @field:NotBlank
     @field:Pattern(regexp = "^\\w+/\\w+\$")
     val currencyPair: String,

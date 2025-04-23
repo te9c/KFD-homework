@@ -11,7 +11,11 @@ spring:
         - id: microservice-user
           uri: lb://microservice-user
           predicates:
-            - Path=/api/auth/**
+            - Path=/api/auth/**,/api/users/**
+        - id: microservice-transactions
+          uri: lb://microservice-transactions
+          predicates:
+            - Path=/api/balance/**,/api/exchangerbalance/**,/api/rates/**,/api/transactions/**
 
 eureka:
   client:

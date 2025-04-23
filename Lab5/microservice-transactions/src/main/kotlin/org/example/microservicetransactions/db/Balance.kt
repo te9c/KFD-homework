@@ -1,6 +1,5 @@
-package org.example.microserviceuser.db
+package org.example.microservicetransactions.db
 
-import com.fasterxml.jackson.annotation.JsonIgnore
 import jakarta.persistence.*
 
 @Entity
@@ -9,10 +8,8 @@ class Balance(
     currencyCode: String = "",
     @Column
     var amount: Int = 0,
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JsonIgnore
-    @JoinColumn(nullable = false, name = "user_id")
-    val user: ExchangerUser? = null
+    @Column
+    val username: String? = null
 ) {
     val currencyCode = currencyCode.uppercase()
     @Id

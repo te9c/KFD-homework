@@ -2,6 +2,7 @@ package org.example.microserviceuser.controllers
 
 import org.example.microserviceuser.db.ExchangerUser
 import org.example.microserviceuser.db.repositories.UserRepository
+import org.example.microserviceuser.dto.UserDto
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.core.parameters.P
@@ -16,11 +17,11 @@ class UserController(val userRepository: UserRepository,
     @GetMapping()
     fun getUsers(): List<ExchangerUser> = userRepository.findAll()
 
-    @PreAuthorize("authentication.name == #u || hasRole('ADMIN')")
+    // @PreAuthorize("authentication.name == #u || hasRole('ADMIN')")
     @GetMapping("/{username}")
-    fun getUser(@PathVariable @P("u") username: String): ResponseEntity<ExchangerUser?> {
-        val user = userRepository.findByUsername(username) ?: return ResponseEntity.notFound().build()
-        return ResponseEntity.ok(user)
+    fun getUser(@PathVariable @P("u") username: String): UserDto? {
+        val user = userRepository.findByUsername(username) ?: return null
+        return UserDto(user.username, user.password, user.authorities)
     }
 
     @DeleteMapping("/{username}")
