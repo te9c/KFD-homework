@@ -11,3 +11,7 @@ Distrubuted tracing реализован с помощью `Zipkin`. Аутен�
 Все `REST` методы остались теми же, что и в [прошлой лабе](https://github.com/te9c/KFD-homework/tree/main/Lab4)
 
 # Showcase
+
+
+https://github.com/user-attachments/assets/03d521fd-3a35-4e11-af0b-ddf3f37c3ff7
+
